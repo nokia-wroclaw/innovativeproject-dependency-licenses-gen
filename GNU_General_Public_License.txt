@@ -1,0 +1,10 @@
+========================================================================
+GNU General Public License (GPL)
+========================================================================
+
+The following components are provided under the GNU General Public License (GPL). 
+The text of each license is also included at 
+licenses/LICENSE-[project]-[version].txt.
+    (GNU GPL) jackson-jaxrs 1.8.3
+    (GPL v.2) jaxb api 2.2.2
+    (GPL v.2) jaxb implementation 2.2.3-1
