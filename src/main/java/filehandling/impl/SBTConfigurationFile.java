@@ -14,7 +14,12 @@ public class SBTConfigurationFile extends ConfigurationFile {
     }
 
     @Override
-    public void generateFileContainingThirdPartDependeciesList() {
+    public void generateFileThirdPartDependeciesList() {
+
+    }
+
+    @Override
+    public void generateZipLicenseFiles() {
 
     }
 }
