@@ -11,39 +11,48 @@ import java.util.List;
 
 public class ComponentsCommonLicenses {
     private String commonLicense;
-    private String licenseAbreviation;
-    private List<ThirdPartyComponent>  thirPartyComponents;
+    private String licenseAbbreviation;
+    private List<ThirdPartyComponent>  thirdPartyComponents;
 
-    public ComponentsCommonLicenses(String commonLicense, String licenseAbreviation, List<ThirdPartyComponent> thirdPartyComponents) {
+
+
+    public ComponentsCommonLicenses(String commonLicense, String licenseAbbreviation, List<ThirdPartyComponent> thirdPartyComponents) {
+
         this.commonLicense = commonLicense;
-        this.licenseAbreviation = licenseAbreviation;
-        this.thirPartyComponents = thirdPartyComponents;
+        this.licenseAbbreviation = licenseAbbreviation;
+        this.thirdPartyComponents = thirdPartyComponents;
     }
 
     public ComponentsCommonLicenses(String commonLicense, List<ThirdPartyComponent> thirdPartyComponents) {
-        this.commonLicense = commonLicense;
-        this.thirPartyComponents = thirdPartyComponents;
-        this.licenseAbreviation = null;
+        this(commonLicense, null,thirdPartyComponents);
+    }
+
+    private String parseToFileName() {
+        return commonLicense.replaceAll(" ", "_") + ".txt";
     }
 
     public void createFile() throws IOException {
-        BufferedWriter fout = new BufferedWriter(new FileWriter(commonLicense.replaceAll(" ", "_") + ".txt"));
+        BufferedWriter fout = new BufferedWriter(new FileWriter(parseToFileName()));
         BufferedReader fin = new BufferedReader(new FileReader(new ClassPathResource("LICENSE-3RD-PARTY_temp.txt").getFile()));
         String line;
 
         while ((line = fin.readLine()) != null) {
-            if (licenseAbreviation == null) {
+            if (licenseAbbreviation == null) {
                 line = line.replaceAll("<name>", commonLicense);
             } else {
-                line = line.replaceAll("<name>", commonLicense + " (" + licenseAbreviation + ")");
+                line = line.replaceAll("<name>", commonLicense + " (" + licenseAbbreviation + ")");
             }
             fout.write(line + "\n");
         }
-        for (ThirdPartyComponent component : thirPartyComponents) {
+        for (ThirdPartyComponent component : thirdPartyComponents) {
             fout.write("    (" + component.getUpperLicense() + ") " +  component.getName() + " " + component.getVersion() + "\n");
         }
 
         fin.close();
         fout.close();
+    }
+
+    public BufferedReader openFile() throws IOException {
+        return new BufferedReader(new FileReader(parseToFileName()));
     }
 }
