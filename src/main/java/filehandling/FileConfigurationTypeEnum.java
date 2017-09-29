@@ -1,31 +1,18 @@
 package filehandling;
 
+import java.util.Arrays;
+
 /**
  * Created by Adam on 2017-09-19.
  */
 public enum FileConfigurationTypeEnum {
-    MAVEN(1), GRADLE(2), SBT(3);
+    MAVEN, GRADLE, SBT;
 
-    FileConfigurationTypeEnum(int idFileConfigurationType) {
-        this.idFileConfigurationType = idFileConfigurationType;
-    }
-
-    public int getIdFileConfigurationType() {
-        return idFileConfigurationType;
-    }
-
-    public void setIdFileConfigurationType(int idFileConfigurationType) {
-        this.idFileConfigurationType = idFileConfigurationType;
-    }
-
-    private int idFileConfigurationType;
-
-    public static FileConfigurationTypeEnum getInstanceById(int id) {
-        for(FileConfigurationTypeEnum instance : FileConfigurationTypeEnum.values()) {
-            if(instance.getIdFileConfigurationType() == id)
-                return instance;
-        }
-        return null;
+    public static FileConfigurationTypeEnum getInstanceIgnoringCase(String value) {
+        return Arrays.stream(FileConfigurationTypeEnum.values())
+                .filter(val->val.name().equalsIgnoreCase(value))
+                .findAny()
+                .orElse(null);
     }
  
 }

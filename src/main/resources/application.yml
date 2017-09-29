@@ -2,5 +2,7 @@ server:
     port: 8080
 
 paths:
-    target: E:\target
+    targetDir: E:\target
     maven:  E:\dev\tools\apache-maven-3.3.3\bin\mvn.cmd
+    gradle: E:\dev\tools\apache-maven-3.3.3\bin\mvn.cmd
+    sbt:  E:\dev\tools\apache-maven-3.3.3\bin\mvn.cmd

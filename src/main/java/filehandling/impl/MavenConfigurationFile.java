@@ -1,23 +1,21 @@
 package filehandling.impl;
 
 import filehandling.ConfigurationFile;
-import filehandling.FileConfigurationTypeEnum;
-import org.springframework.beans.factory.annotation.Value;
+import model.Configuration.ConfigProperties;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.util.zip.ZipOutputStream;
 
 /**
  * Created by Adam on 2017-09-19.
  */
 public class MavenConfigurationFile extends ConfigurationFile {
 
-    @Value("${paths.maven}")
-    private String mavenExePath = "E:\\dev\\tools\\apache-maven-3.3.3\\bin\\mvn.cmd";
+    private String mavenExePath;
 
-    @Value("${paths.target}")
-    private String pathToTargetDir = "E:\\target";
+    private String pathToTargetDir;
+
 
     private static final String pathToOutputLicensesDir = "target" + File.separator + "generated-resources" + File.separator + "licenses";
     private static final String pathToOutputLicensesTxtFile = "target" + File.separator + "generated-sources" +
@@ -27,8 +25,10 @@ public class MavenConfigurationFile extends ConfigurationFile {
     private static final String mavenCommandGeneratingLicenseList = "license:add-third-party";
     private static final String mavenCommandGeneretingLicenseFiles = "license:download-licenses";
 
-    public MavenConfigurationFile(File file, FileConfigurationTypeEnum fileTypeEnum) {
-        super(file, fileTypeEnum);
+    public MavenConfigurationFile(File file, ConfigProperties.Paths pathProperties) {
+        super(file, pathProperties);
+        mavenExePath = pathProperties.getMaven();
+        pathToTargetDir = pathProperties.getTargetDir();
     }
 
     @Override
@@ -67,6 +67,7 @@ public class MavenConfigurationFile extends ConfigurationFile {
             e.printStackTrace();
         }
         System.out.println(log);
+
     }
 
     private String getLogFromProcess(Process p) throws IOException {
