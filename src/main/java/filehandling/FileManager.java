@@ -17,18 +17,12 @@ public class FileManager {
 
     private String pathToTargetDir;
 
-    private ConfigurationFile confgFile;
-
-    private FileConfigurationTypeEnum fileTypeEnum;
     private File targetFile;
 
-
-    public void handleFile(MultipartFile multipartFile, FileConfigurationTypeEnum fileTypeEnum) throws IOException {
-        this.fileTypeEnum = fileTypeEnum;
+    public File uploadFile(MultipartFile multipartFile) throws IOException {
         pathToTargetDir = properties.getPaths().getTargetDir();
-        targetFile = uploadFile(multipartFile);
-        confgFile = ConfigurationFileFactory.getConfigurationFileInstanceByFileType(targetFile, fileTypeEnum, properties.getPaths());
-        generateResults(confgFile);
+        targetFile = saveFile(multipartFile);
+        return targetFile;
     }
 
     private File createEmptyFileInTargetDir(String fileName) {
@@ -37,14 +31,9 @@ public class FileManager {
         return newFile;
     }
 
-    private File uploadFile(MultipartFile multipartFile) throws IOException {
+    private File saveFile(MultipartFile multipartFile) throws IOException {
         File targetFile = createEmptyFileInTargetDir(multipartFile.getOriginalFilename());
         multipartFile.transferTo(targetFile);
         return targetFile;
-    }
-
-    private void generateResults(ConfigurationFile confgFile) {
-        confgFile.generateFileThirdPartDependeciesList();
-        confgFile.generateZipLicenseFiles();
     }
 }

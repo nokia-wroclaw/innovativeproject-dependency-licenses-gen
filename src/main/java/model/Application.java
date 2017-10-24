@@ -14,7 +14,6 @@ import java.util.List;
 
 @ComponentScan({"filehandling","model"})
 @SpringBootApplication()
-@EnableLoadTimeWeaving(aspectjWeaving=EnableLoadTimeWeaving.AspectJWeaving.ENABLED)
 public class Application {
 
     public static void main(String[] args) throws IOException {

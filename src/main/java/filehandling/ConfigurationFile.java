@@ -14,21 +14,14 @@ import java.io.File;
  * Created by Adam on 2017-09-19.
  */
 
-public abstract class ConfigurationFile {
-    protected File file;
-    protected @Getter File generatedTxtFileLicenseNameList;
-    protected @Getter File generatedZipLicensesFile;
-    @Autowired
-    protected ConfigProperties configProperties;
+public class ConfigurationFile {
+    private File file;
+    FileConfigurationTypeEnum fileTypeEnum;
+    private @Getter File generatedTxtFileLicenseNameList;
+    private @Getter File generatedZipLicensesFile;
 
-    protected ConfigProperties.Paths pathProperties;
-
-    protected ConfigurationFile(File file, ConfigProperties.Paths pathProperties) {
+    protected ConfigurationFile(File file, FileConfigurationTypeEnum fileTypeEnum) {
         this.file = file;
-        this.pathProperties = pathProperties;
+        this.fileTypeEnum = fileTypeEnum;
     }
-    public abstract void generateFileThirdPartDependeciesList();
-
-    public abstract void generateZipLicenseFiles();
-
 }

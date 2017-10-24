@@ -32,5 +32,6 @@ dependencies {
     compile("com.fasterxml.jackson.core:jackson-databind")
     compile("org.springframework:spring-web")
     compileOnly("org.projectlombok:lombok:1.16.18")
+    compile group: 'org.json', name: 'json', version: '20170516'
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
