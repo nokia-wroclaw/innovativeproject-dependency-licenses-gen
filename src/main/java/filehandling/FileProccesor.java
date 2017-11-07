@@ -1,14 +1,14 @@
 package filehandling;
 
-import businessLogic.impl.MavenService;
+import businessLogic.impl.Maven.MavenService;
+import license.jacksonTemplate.LicenseJackson;
 import model.Configuration.ConfigProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 
-/**
- * Created by Adam on 2017-10-24.
- */
+@Component
 public class FileProccesor {
     @Autowired
     ConfigProperties properties;
@@ -16,12 +16,13 @@ public class FileProccesor {
     @Autowired
     MavenService mvnService;
 
-    public String process(File file, FileConfigurationTypeEnum fileTypeEnum) {
-        String json = null;
+    public File process(File file, FileConfigurationTypeEnum fileTypeEnum) {
+        File zip = null;
                 if(fileTypeEnum == FileConfigurationTypeEnum.MAVEN) {
             mvnService.generateFiles(file);
-            json = mvnService.getJSON();
+            String json = mvnService.getJSON();
+            zip = mvnService.getGeneratedFiles();
         }
-    return json;
+    return zip;
     }
 }

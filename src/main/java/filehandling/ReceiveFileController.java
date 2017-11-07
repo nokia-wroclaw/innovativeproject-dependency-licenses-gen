@@ -1,7 +1,9 @@
 package filehandling;
 
+import license.jacksonTemplate.LicenseJackson;
 import model.Configuration.ConfigProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +18,9 @@ public class ReceiveFileController {
     private FileConfigurationTypeEnum fileTypeEnum;
 
     @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
     private FileManager fileManager;
 
     @Autowired
@@ -25,21 +30,30 @@ public class ReceiveFileController {
     private ConfigProperties prop;
 
     @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
-    public String uploadFileHandler(@RequestParam("file") MultipartFile multipartFile, @RequestParam(value = "fileType") String fileType) {
+    public File uploadFileHandler(@RequestParam("file") MultipartFile multipartFile, @RequestParam(value = "fileType") String fileType) {
         if (!multipartFile.isEmpty()) {
-                fileTypeEnum = FileConfigurationTypeEnum.getInstanceIgnoringCase(fileType);
+            fileTypeEnum = FileConfigurationTypeEnum.getInstanceIgnoringCase(fileType);
             try {
                 File uploadedFile = fileManager.uploadFile(multipartFile);
-                String json = fileProccesor.process(uploadedFile, fileTypeEnum);
-                return json;
+                return fileProccesor.process(uploadedFile, fileTypeEnum);
             } catch (IOException e) {
                 e.printStackTrace();
-                return "You failed to upload file";
+                return null;
 
             }
         } else {
-            return "You failed to upload "
-                    + " because the file was empty.";
+            return null;
         }
+    }
+
+    @RequestMapping("/hello")
+    public String hello() {
+        System.out.println( applicationContext.getBeanDefinitionNames().toString());
+        String[] names =  applicationContext.getBeanDefinitionNames();
+        for (String name:names
+             ) {System.out.println(name);
+
+        }
+        return  applicationContext.getBeanDefinitionNames().toString();
     }
 }

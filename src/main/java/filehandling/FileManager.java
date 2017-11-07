@@ -2,6 +2,7 @@ package filehandling;
 
 import model.Configuration.ConfigProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -10,6 +11,7 @@ import java.io.IOException;
 /**
  * Created by Adam on 2017-09-28.
  */
+@Component
 public class FileManager {
 
     @Autowired

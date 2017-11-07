@@ -1,24 +1,33 @@
-package businessLogic.impl;
+package businessLogic.impl.Maven;
 
 import businessLogic.ConfigurationFileService;
+import license.License;
+import license.jacksonTemplate.LicenseJackson;
+import misc.ZipDirectory;
 import model.Configuration.ConfigProperties;
 import org.json.XML;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+
+import org.apache.commons.io.IOUtils;
+import org.json.JSONObject;
+import org.json.XML;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 @Service
 public class MavenService implements ConfigurationFileService {
 
     @Autowired
     private ConfigProperties properties;
+
+    private File genereatedFiles;
 
     private static final String pathToOutputLicensesDir = "target" + File.separator + "generated-resources" + File.separator + "licenses";
     private static final String pathToOutputLicensesTxtFile = File.separator + "target" + File.separator + "generated-sources" +
@@ -31,25 +40,29 @@ public class MavenService implements ConfigurationFileService {
 
     @Override
     public File generateFiles(File file) {
+        File result = null;
         String mavenExePath = properties.getPaths().getMaven();
         String pathToTargetDir = properties.getPaths().getTargetDir();
         generateFileThirdPartDependeciesList(pathToTargetDir,mavenExePath);
         generateZipLicenseFiles(pathToTargetDir, mavenExePath);
-        return null;
+        try {
+            result = ZipDirectory.createZippedDirectory(properties.getPaths().getTargetDir() + File.separator + "output");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        genereatedFiles = result;
+        return result;
     }
 
     @Override
     public String getJSON() {
         String pathToLicenseListXml = properties.getPaths().getTargetDir() + File.separator + "output" + File.separator + "licenses.xml";
-        String xmlString = null;
-        try {
-            List<String> lines = Files.readAllLines(Paths.get(pathToLicenseListXml));
-            xmlString = String.join("\n", lines);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String json = XML.toJSONObject(xmlString).toString();
-        return json;
+        return xmlFileToJsonString(pathToLicenseListXml);
+    }
+
+    @Override
+    public File getGeneratedFiles() {
+        return genereatedFiles;
     }
 
     public void generateFileThirdPartDependeciesList(String pathToTargetDir, String mavenExePath) {
@@ -105,5 +118,34 @@ public class MavenService implements ConfigurationFileService {
         p = Runtime.getRuntime().exec(command, null, dir);
         p.waitFor();
         return p;
+    }
+    private String xmlFileToJsonString(String xmlFilePath){
+        String output = "";
+        try (InputStream inputStream = new FileInputStream(new File(
+                xmlFilePath))) {
+            String xml = IOUtils.toString(inputStream);
+            JSONObject jObject = XML.toJSONObject(xml);
+            System.out.println(jObject.toString());
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.enable(SerializationFeature.INDENT_OUTPUT);
+            Object json = mapper.readValue(jObject.toString(), Object.class);
+            output = mapper.writeValueAsString(json);
+            return output;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return  output;
+    }
+    private LicenseJackson jsonStringToJacksonObj(String jsonString){
+        ObjectMapper mapper = new ObjectMapper();
+        LicenseJackson jsonObj= null;
+        try {
+            jsonObj = mapper.readValue(jsonString, LicenseJackson.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return jsonObj;
     }
 }
